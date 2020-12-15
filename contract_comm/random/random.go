@@ -171,6 +171,8 @@ func DeleteLastRandomness(coinbase common.Address, db *ethdb.Database, header *t
 
 	err = (*db).Delete(commitmentDbLocation(lastCommitment))
 	log.Warn("Deleted last randomness", "err", err)
+	_, err = (*db).Get(commitmentDbLocation(lastCommitment))
+	log.Warn("Attempting to get", "err", err)
 }
 
 // GetLastRandomness returns up the last randomness we committed to by first
