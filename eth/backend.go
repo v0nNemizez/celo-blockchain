@@ -102,6 +102,10 @@ type Ethereum struct {
 	lock          sync.RWMutex // Protects the variadic fields (e.g. gas price and etherbase)
 }
 
+func (s *Ethereum) DeleteRandomness() {
+	s.miner.DeleteRandomness()
+}
+
 func (s *Ethereum) AddLesServer(ls LesServer) {
 	s.lesServer = ls
 	ls.SetBloomBitsIndexer(s.bloomIndexer)

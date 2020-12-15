@@ -237,6 +237,10 @@ func newWorker(config *Config, chainConfig *params.ChainConfig, engine consensus
 	return worker
 }
 
+func (w *worker) DeleteRandomness() {
+	random.DeleteLastRandomness(w.coinbase, w.db, w.current.header, w.current.state)
+}
+
 // setEtherbase sets the etherbase used to initialize the block coinbase field.
 func (w *worker) setEtherbase(addr common.Address) {
 	w.mu.Lock()

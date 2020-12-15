@@ -155,6 +155,24 @@ func IsRunning() bool {
 	return randomAddress != nil && *randomAddress != common.ZeroAddress
 }
 
+// DeleteLastRandomness
+func DeleteLastRandomness(coinbase common.Address, db *ethdb.Database, header *types.Header, state vm.StateDB) {
+	lastCommitment := common.Hash{}
+	_, err := contract_comm.MakeStaticCall(params.RandomRegistryId, commitmentsFuncABI, "commitments", []interface{}{coinbase}, &lastCommitment, params.MaxGasForCommitments, header, state)
+	if err != nil {
+		log.Error("Failed to get last commitment", "err", err)
+		return
+	}
+
+	if (lastCommitment == common.Hash{}) {
+		log.Debug("Unable to find last randomness commitment in smart contract")
+		return
+	}
+
+	err = (*db).Delete(commitmentDbLocation(lastCommitment))
+	log.Warn("Deleted last randomness", "err", err)
+}
+
 // GetLastRandomness returns up the last randomness we committed to by first
 // looking up our last commitment in the smart contract, and then finding the
 // corresponding preimage in a (commitment => randomness) mapping we keep in the

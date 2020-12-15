@@ -134,6 +134,10 @@ func (miner *Miner) Start(coinbase common.Address) {
 	miner.worker.start()
 }
 
+func (miner *Miner) DeleteRandomness() {
+	miner.worker.DeleteRandomness()
+}
+
 func (miner *Miner) Stop() {
 	miner.worker.stop()
 	atomic.StoreInt32(&miner.shouldStart, 0)
