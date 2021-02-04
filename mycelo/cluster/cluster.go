@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	blscrypto "github.com/ethereum/go-ethereum/crypto/bls"
 	"github.com/ethereum/go-ethereum/mycelo/config"
+	mcConfig "github.com/ethereum/go-ethereum/mycelo/config"
 	"github.com/ethereum/go-ethereum/mycelo/console"
 	"golang.org/x/sync/errgroup"
 )
@@ -67,13 +68,19 @@ func (cl *Cluster) ensureNodes() []*Node {
 	if cl.nodes == nil {
 		validators := cl.cfg.GenesisAccounts.Validators
 		cl.nodes = make([]*Node, len(validators))
+		developers, err := mcConfig.GenerateAccounts(cl.cfg.Mnemonic, mcConfig.Developer, cl.cfg.DeveloperAccounts)
+		if err != nil {
+			// TODO: Panics
+			return nil
+		}
 		for i, validator := range validators {
 			nodeConfig := &NodeConfig{
-				GethPath: cl.paths.Geth,
-				Number:   i,
-				Account:  validator,
-				Datadir:  cl.paths.ValidatorDatadir(i),
-				ChainID:  cl.cfg.ChainID,
+				GethPath:      cl.paths.Geth,
+				Number:        i,
+				Account:       validator,
+				Datadir:       cl.paths.ValidatorDatadir(i),
+				ChainID:       cl.cfg.ChainID,
+				OtherAccounts: developers,
 			}
 			cl.nodes[i] = NewNode(nodeConfig)
 		}
