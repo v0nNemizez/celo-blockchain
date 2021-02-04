@@ -686,7 +686,7 @@ func (ctx *deployContext) deployStableToken() error {
 
 		if !authorized {
 			ctx.logger.Warn("Fixing StableToken goldprice requires setting admin as oracle", "admin", ctx.admin)
-			err = ctx.contract("SortedOracles").SimpleCall("addOracle", stableTokenAddress, ctx.deployer)
+			err = ctx.contract("SortedOracles").SimpleCall("addOracle", stableTokenAddress, ctx.admin)
 			if err != nil {
 				return err
 			}
