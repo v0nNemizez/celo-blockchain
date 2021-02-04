@@ -14,9 +14,7 @@ import (
 )
 
 type Cluster struct {
-	paths config.Paths
-
-	cfg *config.Config
+	*config.Environment
 
 	nodes []*Node
 }
@@ -24,10 +22,9 @@ type Cluster struct {
 var scryptN = keystore.LightScryptN
 var scryptP = keystore.LightScryptP
 
-func New(paths config.Paths, cfg *config.Config) *Cluster {
+func New(env *config.Environment) *Cluster {
 	return &Cluster{
-		cfg:   cfg,
-		paths: paths,
+		Environment: env,
 	}
 }
 
@@ -39,7 +36,7 @@ func (cl *Cluster) Init() error {
 	console.Info("Initializing validator nodes")
 	for i, node := range nodes {
 		console.Infof("validator-%d> geth init", i)
-		if err := node.Init(cl.paths.GenesisJSON()); err != nil {
+		if err := node.Init(cl.Paths.GenesisJSON()); err != nil {
 			return err
 		}
 
@@ -66,7 +63,7 @@ func (cl *Cluster) Init() error {
 func (cl *Cluster) ensureNodes() []*Node {
 
 	if cl.nodes == nil {
-		validators := cl.cfg.GenesisAccounts.Validators
+		validators := cl.ValidatorAccounts()
 		cl.nodes = make([]*Node, len(validators))
 		developers, err := mcConfig.GenerateAccounts(cl.cfg.Mnemonic, mcConfig.Developer, cl.cfg.DeveloperAccounts)
 		if err != nil {
