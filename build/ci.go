@@ -281,7 +281,7 @@ func buildFlags(env build.Environment) (flags []string) {
 		ld = append(ld, "-X", "main.gitDate="+env.Date)
 	}
 	if runtime.GOOS == "darwin" {
-		ld = append(ld, "-s")
+		// ld = append(ld, "-s")
 	} else {
 		ld = append(ld, "-extldflags")
 		ld = append(ld, "-pthread")
