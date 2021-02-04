@@ -240,7 +240,7 @@ func newEnv(ctx *cli.Context) error {
 		return err
 	}
 
-	template := templateFromString("local")
+	template := templateFromString("loadtest")
 
 	log.Info("Creating new environment", "envdir", workdir)
 	env, err := template.createEnv(workdir, func(cfg *config.Config) {
