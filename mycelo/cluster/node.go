@@ -161,7 +161,7 @@ func (n *Node) Run(ctx context.Context) error {
 
 	args := []string{
 		"--datadir", n.Datadir,
-		"--verbosity", "2",
+		"--verbosity", "4",
 		"--networkid", n.ChainID.String(),
 		"--syncmode", "full",
 		"--mine",
@@ -187,7 +187,7 @@ func (n *Node) Run(ctx context.Context) error {
 	}
 	defer logfile.Close()
 	cmd.Stderr = logfile
-	cmd.Stdout = os.Stdout
+	// cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
