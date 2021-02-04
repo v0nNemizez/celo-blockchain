@@ -88,6 +88,7 @@ func DefaultContractsConfig(cfg *Config) *Paremeters {
 			Rate:                        fixed.MustNew("1"),
 			InflationFactorUpdatePeriod: big.NewInt(47304000),
 			InitialBalances:             cusdBalances,
+			GoldPrice:                   fixed.MustNew("1"),
 		},
 		Validators: ValidatorsParameters{
 			GroupLockedGoldRequirements: LockedGoldRequirements{
