@@ -80,7 +80,6 @@ func DefaultContractsConfig(cfg *Config) *Paremeters {
 			Decimals:                    18,
 			Rate:                        fixed.MustNew("1"),
 			InflationFactorUpdatePeriod: big.NewInt(47304000),
-			InflationPeriod:             big.NewInt(1),
 			InitialBalances: BalanceList{
 				{common.HexToAddress("0xc471776eA02705004C451959129bF09423B56526"), mustBigInt("5000000000000000000000000")},
 			},
@@ -324,7 +323,6 @@ type StableTokenParameters struct {
 	Symbol                      string           `json:"symbol"`
 	Decimals                    uint8            `json:"decimals"`
 	Rate                        *fixed.Fixed     `json:"rate"`
-	InflationPeriod             *big.Int         `json:"inflationPeriod"`
 	InflationFactorUpdatePeriod *big.Int         `json:"inflationFactorUpdatePeriod"`
 	InitialBalances             BalanceList      `json:"initialBalances"`
 	Frozen                      bool             `json:"frozen"`

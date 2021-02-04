@@ -622,7 +622,7 @@ func (ctx *deployContext) deployStableToken() error {
 			ctx.parameters.StableToken.Decimals,
 			ctx.contracts.ProxyAddressFor("Registry"),
 			ctx.parameters.StableToken.Rate.BigInt(),
-			ctx.parameters.StableToken.InflationPeriod,
+			ctx.parameters.StableToken.InflationFactorUpdatePeriod,
 			ctx.parameters.StableToken.InitialBalances.Accounts(),
 			ctx.parameters.StableToken.InitialBalances.Amounts(),
 		)
@@ -650,7 +650,7 @@ func (ctx *deployContext) deployStableToken() error {
 	// Configure StableToken Oracles
 	for _, oracleAddress := range ctx.parameters.StableToken.Oracles {
 		ctx.logger.Info("Adding oracle for StableToken", "oracle", oracleAddress)
-		err = ctx.contract("Oracle").SimpleCall("addOracle", stableTokenAddress, oracleAddress)
+		err = ctx.contract("SortedOracles").SimpleCall("addOracle", stableTokenAddress, oracleAddress)
 		if err != nil {
 			return err
 		}
@@ -671,14 +671,14 @@ func (ctx *deployContext) deployStableToken() error {
 
 		if !authorized {
 			ctx.logger.Warn("Fixing StableToken goldprice requires setting deployer as oracle", "deployer", ctx.deployer)
-			err = ctx.contract("Oracle").SimpleCall("addOracle", stableTokenAddress, ctx.deployer)
+			err = ctx.contract("SortedOracles").SimpleCall("addOracle", stableTokenAddress, ctx.deployer)
 			if err != nil {
 				return err
 			}
 		}
 
 		ctx.logger.Info("Reporting price of StableToken to oracle")
-		err = ctx.contract("Oracle").SimpleCall("report",
+		err = ctx.contract("SortedOracles").SimpleCall("report",
 			stableTokenAddress,
 			ctx.parameters.StableToken.GoldPrice.BigInt(),
 			common.ZeroAddress,
