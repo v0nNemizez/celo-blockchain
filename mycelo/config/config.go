@@ -167,7 +167,7 @@ func (cfg *Config) ApplyDefaults() {
 		cfg.Istanbul.BlockPeriod = 5
 	}
 	if cfg.Istanbul.Epoch == 0 {
-		cfg.Istanbul.Epoch = 1728
+		cfg.Istanbul.Epoch = 17280
 	} else {
 		// validate epoch size
 		if cfg.Istanbul.Epoch < istanbul.MinEpochSize {
