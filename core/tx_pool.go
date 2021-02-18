@@ -581,6 +581,9 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 	if tx.EthCompatible() && !pool.ethCompatible {
 		return ErrEthCompatibleTransactionsNotSupported
 	}
+	if tx.EthCompatible() && !(tx.FeeCurrency() == nil && tx.GatewayFeeRecipient() == nil && tx.GatewayFee().Sign() == 0) {
+		return ErrEthCompatibleTransactionIsntCompatible
+	}
 	// Reject transactions over defined size to prevent DOS attacks
 	if uint64(tx.Size()) > txMaxSize {
 		return ErrOversizedData
