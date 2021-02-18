@@ -738,6 +738,7 @@ type CallArgs struct {
 	GatewayFee          hexutil.Big     `json:"gatewayFee"`
 	Value               *hexutil.Big    `json:"value"`
 	Data                *hexutil.Bytes  `json:"data"`
+	EthCompatible       bool            `json:"ethCompatible"`
 }
 
 // ToMessage converts CallArgs to the Message type used by the core evm
@@ -772,7 +773,7 @@ func (args *CallArgs) ToMessage(globalGasCap *big.Int) types.Message {
 		data = []byte(*args.Data)
 	}
 
-	msg := types.NewMessage(addr, args.To, 0, value, gas, gasPrice, args.FeeCurrency, args.GatewayFeeRecipient, args.GatewayFee.ToInt(), data, false)
+	msg := types.NewMessage(addr, args.To, 0, value, gas, gasPrice, args.FeeCurrency, args.GatewayFeeRecipient, args.GatewayFee.ToInt(), data, args.EthCompatible, false)
 	return msg
 }
 

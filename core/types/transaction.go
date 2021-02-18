@@ -527,11 +527,11 @@ type Message struct {
 	gatewayFeeRecipient *common.Address
 	gatewayFee          *big.Int
 	data                []byte
-	checkNonce          bool
 	ethCompatible       bool
+	checkNonce          bool
 }
 
-func NewMessage(from common.Address, to *common.Address, nonce uint64, amount *big.Int, gasLimit uint64, gasPrice *big.Int, feeCurrency, gatewayFeeRecipient *common.Address, gatewayFee *big.Int, data []byte, checkNonce bool) Message {
+func NewMessage(from common.Address, to *common.Address, nonce uint64, amount *big.Int, gasLimit uint64, gasPrice *big.Int, feeCurrency, gatewayFeeRecipient *common.Address, gatewayFee *big.Int, data []byte, ethCompatible, checkNonce bool) Message {
 	return Message{
 		from:                from,
 		to:                  to,
@@ -543,6 +543,7 @@ func NewMessage(from common.Address, to *common.Address, nonce uint64, amount *b
 		gatewayFeeRecipient: gatewayFeeRecipient,
 		gatewayFee:          gatewayFee,
 		data:                data,
+		ethCompatible:       ethCompatible,
 		checkNonce:          checkNonce,
 	}
 }

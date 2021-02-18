@@ -350,6 +350,7 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 	// applying the message. The rules include these clauses
 	//
 	// 0. If the message is from an eth-compatible transaction, that we support those
+	//    and that none of the non-eth-compatible fields are present
 	// 1. the nonce of the message caller is correct
 	// 2. the gas price meets the minimum gas price
 	// 3. caller has enough balance (in the right currency) to cover transaction fee
@@ -361,6 +362,9 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 	// Clause 0
 	if st.msg.EthCompatible() && !st.evm.ChainConfig().IsCIPEth(st.evm.BlockNumber) {
 		return nil, ErrEthCompatibleTransactionsNotSupported
+	}
+	if st.msg.EthCompatible() && !(st.msg.FeeCurrency() == nil && st.msg.GatewayFeeRecipient() == nil && st.msg.GatewayFee().Sign() == 0) {
+		return nil, ErrEthCompatibleTransactionIsntCompatible
 	}
 
 	// Check clauses 1-2
