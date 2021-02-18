@@ -1430,6 +1430,7 @@ type SendTxArgs struct {
 	GatewayFee          *hexutil.Big    `json:"gatewayFee"`
 	Value               *hexutil.Big    `json:"value"`
 	Nonce               *hexutil.Uint64 `json:"nonce"`
+	EthCompatible       bool            `json:"ethCompatible"`
 	// We accept "data" and "input" for backwards-compatibility reasons. "input" is the
 	// newer name and should be preferred by clients.
 	Data  *hexutil.Bytes `json:"data"`
@@ -1438,6 +1439,11 @@ type SendTxArgs struct {
 
 // setDefaults is a helper function that fills in default values for unspecified tx fields.
 func (args *SendTxArgs) setDefaults(ctx context.Context, b Backend) error {
+	// Reject if Celo-only fields set when EthCompatible is true
+	if args.EthCompatible && !(args.FeeCurrency == nil && args.GatewayFeeRecipient == nil && (args.GatewayFee == nil || args.GatewayFee.ToInt().Sign() == 0)) {
+		log.Warn("incompat", "feecurrency", args.FeeCurrency, "recipient", args.GatewayFeeRecipient, "gateway fee", args.GatewayFee.ToInt().String())
+		return errors.New("Transaction has ethCompatible: true but specifies non-Ethereum-compatible fields")
+	}
 	if args.Gas == nil {
 		args.Gas = new(hexutil.Uint64)
 		defaultGas := uint64(90000)
@@ -1495,7 +1501,7 @@ func (args *SendTxArgs) setDefaults(ctx context.Context, b Backend) error {
 		}
 	}
 
-	if args.GatewayFeeRecipient == nil {
+	if args.GatewayFeeRecipient == nil && !args.EthCompatible {
 		recipient := b.GatewayFeeRecipient()
 		if (recipient != common.Address{}) {
 			args.GatewayFeeRecipient = &recipient
@@ -1540,6 +1546,9 @@ func (args *SendTxArgs) toTransaction() *types.Transaction {
 	}
 	if args.To == nil {
 		return types.NewContractCreation(uint64(*args.Nonce), (*big.Int)(args.Value), uint64(*args.Gas), (*big.Int)(args.GasPrice), args.FeeCurrency, args.GatewayFeeRecipient, (*big.Int)(args.GatewayFee), input)
+	}
+	if args.EthCompatible {
+		return types.NewTransactionEthCompatible(uint64(*args.Nonce), *args.To, (*big.Int)(args.Value), uint64(*args.Gas), (*big.Int)(args.GasPrice), input)
 	}
 	return types.NewTransaction(uint64(*args.Nonce), *args.To, (*big.Int)(args.Value), uint64(*args.Gas), (*big.Int)(args.GasPrice), args.FeeCurrency, args.GatewayFeeRecipient, (*big.Int)(args.GatewayFee), input)
 }

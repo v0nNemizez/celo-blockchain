@@ -76,6 +76,7 @@ type SendTxArgs struct {
 	GatewayFee          hexutil.Big              `json:"gatewayFee"`
 	Value               hexutil.Big              `json:"value"`
 	Nonce               hexutil.Uint64           `json:"nonce"`
+	EthCompatible       bool                     `json:"ethCompatible"`
 	// We accept "data" and "input" for backwards-compatibility reasons.
 	Data  *hexutil.Bytes `json:"data"`
 	Input *hexutil.Bytes `json:"input,omitempty"`
