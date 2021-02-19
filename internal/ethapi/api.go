@@ -1546,6 +1546,9 @@ func (args *SendTxArgs) toTransaction() *types.Transaction {
 		input = *args.Data
 	}
 	if args.To == nil {
+		if args.EthCompatible {
+			return types.NewContractCreationEthCompatible(uint64(*args.Nonce), (*big.Int)(args.Value), uint64(*args.Gas), (*big.Int)(args.GasPrice), input)
+		}
 		return types.NewContractCreation(uint64(*args.Nonce), (*big.Int)(args.Value), uint64(*args.Gas), (*big.Int)(args.GasPrice), args.FeeCurrency, args.GatewayFeeRecipient, (*big.Int)(args.GatewayFee), input)
 	}
 	if args.EthCompatible {
