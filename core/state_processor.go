@@ -25,6 +25,7 @@ import (
 	"github.com/celo-org/celo-blockchain/core/types"
 	"github.com/celo-org/celo-blockchain/core/vm"
 	"github.com/celo-org/celo-blockchain/crypto"
+	"github.com/celo-org/celo-blockchain/log"
 	"github.com/celo-org/celo-blockchain/params"
 )
 
@@ -104,6 +105,7 @@ func (p *StateProcessor) Process(block *types.Block, statedb *state.StateDB, cfg
 		receipts = append(receipts, receipt)
 	}
 
+	log.Trace("Finished processing block", "func", "Process", "block", header.Number.Uint64(), "usedGas", *usedGas, "txCount", len(block.Transactions()))
 	return receipts, allLogs, *usedGas, nil
 }
 
