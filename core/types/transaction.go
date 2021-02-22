@@ -137,6 +137,7 @@ type txdataMarshaling struct {
 	V                   *hexutil.Big
 	R                   *hexutil.Big
 	S                   *hexutil.Big
+	EthCompatible       bool
 }
 
 func NewTransaction(nonce uint64, to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, feeCurrency, gatewayFeeRecipient *common.Address, gatewayFee *big.Int, data []byte) *Transaction {
