@@ -108,7 +108,13 @@ func (args *SendTxArgs) toTransaction() *types.Transaction {
 		gatewayFeeRecipient = &tmp
 	}
 	if args.To == nil {
+		if args.EthCompatible {
+			return types.NewContractCreationEthCompatible(uint64(args.Nonce), (*big.Int)(&args.Value), uint64(args.Gas), (*big.Int)(&args.GasPrice), input)
+		}
 		return types.NewContractCreation(uint64(args.Nonce), (*big.Int)(&args.Value), uint64(args.Gas), (*big.Int)(&args.GasPrice), feeCurrency, gatewayFeeRecipient, (*big.Int)(&args.GatewayFee), input)
+	}
+	if args.EthCompatible {
+		return types.NewTransactionEthCompatible(uint64(args.Nonce), args.To.Address(), (*big.Int)(&args.Value), (uint64)(args.Gas), (*big.Int)(&args.GasPrice), input)
 	}
 	return types.NewTransaction(uint64(args.Nonce), args.To.Address(), (*big.Int)(&args.Value), (uint64)(args.Gas), (*big.Int)(&args.GasPrice), feeCurrency, gatewayFeeRecipient, (*big.Int)(&args.GatewayFee), input)
 }
