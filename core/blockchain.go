@@ -18,11 +18,13 @@
 package core
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"math/big"
 	mrand "math/rand"
+	"runtime/pprof"
 	"sort"
 	"sync"
 	"sync/atomic"
@@ -1488,6 +1490,7 @@ func (bc *BlockChain) addFutureBlock(block *types.Block) error {
 //
 // After insertion is done, all accumulated events will be fired.
 func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
+
 	// Sanity check that we have something meaningful to import
 	if len(chain) == 0 {
 		return 0, nil
@@ -1516,7 +1519,13 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 	// Pre-checks passed, start the full block imports
 	bc.wg.Add(1)
 	bc.chainmu.Lock()
-	n, err := bc.insertChain(chain, true)
+	// Tag `insert chain`
+	labels := pprof.Labels("blockchain", "insert")
+	var n int
+	var err error
+	pprof.Do(context.TODO(), labels, func(ctx context.Context) {
+		n, err = bc.insertChain(chain, true)
+	})
 	bc.chainmu.Unlock()
 	bc.wg.Done()
 
