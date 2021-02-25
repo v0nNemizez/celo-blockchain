@@ -74,7 +74,7 @@ require (
 	gopkg.in/urfave/cli.v1 v1.20.0
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 	gotest.tools v2.2.0+incompatible // indirect
-	xyzc.dev/go/profile v0.0.0-20210225162009-abe11e8823c9
+	xyzc.dev/go/profile v0.0.0-20210225191523-58d14187ed33
 )
 
 // Use our fork which disables bitcode

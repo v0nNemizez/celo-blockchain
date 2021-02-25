@@ -611,7 +611,7 @@ func (w *worker) resultLoop() {
 				log.Error("Failed writing block to chain", "err", err)
 				continue
 			}
-			ethereum.ST.Mark("worker:insert")
+			ethereum.ST.End("worker:insert")
 			// END HERE
 			printHeader := func() { fmt.Printf("blockNumber,txCount,usedGas,round,%v\n", ethereum.ST.CSVHeader()) }
 			ethereum.Once.Do(printHeader)

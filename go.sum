@@ -276,3 +276,5 @@ gotest.tools v2.2.0+incompatible h1:VsBPFP1AI068pPrMxtb/S8Zkgf9xEmTLJjfM+P5UIEo=
 gotest.tools v2.2.0+incompatible/go.mod h1:DsYFclhRJ6vuDpmuTbkuFWG+y2sxOXAzmJt81HFBacw=
 xyzc.dev/go/profile v0.0.0-20210225162009-abe11e8823c9 h1:tlIKmgWyrH8Rqy2Ywh08A2LGW6ijjZFb65PgXx4KncM=
 xyzc.dev/go/profile v0.0.0-20210225162009-abe11e8823c9/go.mod h1:Puqb0NmBwBgnTVYobpKAMQDZXsLJQpb8m5lNnTgjlaE=
+xyzc.dev/go/profile v0.0.0-20210225191523-58d14187ed33 h1:DdV9eA6iekdBN0XW99jWsRdVjUz/UcqrCMUF8+7KSg8=
+xyzc.dev/go/profile v0.0.0-20210225191523-58d14187ed33/go.mod h1:Puqb0NmBwBgnTVYobpKAMQDZXsLJQpb8m5lNnTgjlaE=
