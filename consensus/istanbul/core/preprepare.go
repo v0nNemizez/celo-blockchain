@@ -19,6 +19,7 @@ package core
 import (
 	"time"
 
+	ethereum "github.com/celo-org/celo-blockchain"
 	"github.com/celo-org/celo-blockchain/common"
 	"github.com/celo-org/celo-blockchain/consensus"
 	"github.com/celo-org/celo-blockchain/consensus/istanbul"
@@ -149,6 +150,8 @@ func (c *core) handlePreprepare(msg *istanbul.Message) error {
 		c.backlog.updateState(c.current.View(), c.current.State())
 		c.sendPrepare()
 	}
+
+	ethereum.ST.Mark("engine:pre-prepare")
 
 	return nil
 }

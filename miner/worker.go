@@ -18,11 +18,13 @@ package miner
 
 import (
 	"bytes"
+	"fmt"
 	"math/big"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	ethereum "github.com/celo-org/celo-blockchain"
 	"github.com/celo-org/celo-blockchain/common"
 	"github.com/celo-org/celo-blockchain/consensus"
 	"github.com/celo-org/celo-blockchain/consensus/misc"
@@ -39,6 +41,7 @@ import (
 	"github.com/celo-org/celo-blockchain/metrics"
 	"github.com/celo-org/celo-blockchain/params"
 	mapset "github.com/deckarep/golang-set"
+	"xyzc.dev/go/profile/timer"
 )
 
 const (
@@ -608,6 +611,17 @@ func (w *worker) resultLoop() {
 				log.Error("Failed writing block to chain", "err", err)
 				continue
 			}
+			ethereum.ST.Mark("worker:insert")
+			// END HERE
+			printHeader := func() { fmt.Printf("blockNumber,txCount,usedGas,round,%v\n", ethereum.ST.CSVHeader()) }
+			ethereum.Once.Do(printHeader)
+			istExtra, _ := types.ExtractIstanbulExtra(block.Header())
+			round := istExtra.AggregatedSeal.Round
+			fmt.Printf("%v,%v,%v,%v,%v\n",
+				block.Header().Number.Uint64(),
+				len(block.Transactions()),
+				block.GasUsed(), round, ethereum.ST.CSVString())
+
 			blockFinalizationTimeGauge.Update(time.Now().UnixNano() - int64(block.Time())*1000000000)
 			log.Info("Successfully sealed new block", "number", block.Number(), "sealhash", sealhash, "hash", hash,
 				"elapsed", common.PrettyDuration(time.Since(task.createdAt)))
@@ -804,6 +818,7 @@ func (w *worker) commitTransactions(txs *types.TransactionsByPriceAndNonce, txFe
 
 // commitNewWork generates several new sealing tasks based on the parent block.
 func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) {
+	ethereum.ST = timer.NewSectionTimer("block_cycle")
 	w.mu.RLock()
 	defer w.mu.RUnlock()
 
@@ -846,6 +861,7 @@ func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) 
 		log.Error("Failed to prepare header for mining", "err", err)
 		return
 	}
+	ethereum.ST.Mark("worker:prepare")
 	// If we are care about TheDAO hard-fork check whether to override the extra-data or not
 	if daoBlock := w.chainConfig.DAOForkBlock; daoBlock != nil {
 		// Check whether the block is among the fork extra-override range
@@ -1005,6 +1021,7 @@ func (w *worker) commit(interval func(), update bool, start time.Time) error {
 		log.Error("Unable to finalize block", "err", err)
 		return err
 	}
+	ethereum.ST.Mark("worker:finalize")
 	if w.isRunning() {
 		if interval != nil {
 			interval()

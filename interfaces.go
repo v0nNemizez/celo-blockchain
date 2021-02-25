@@ -21,10 +21,15 @@ import (
 	"context"
 	"errors"
 	"math/big"
+	"sync"
+	"xyzc.dev/go/profile/timer"
 
 	"github.com/celo-org/celo-blockchain/common"
 	"github.com/celo-org/celo-blockchain/core/types"
 )
+
+var Once sync.Once
+var ST *timer.SectionTimer
 
 // NotFound is returned by API methods if the requested item does not exist.
 var NotFound = errors.New("not found")

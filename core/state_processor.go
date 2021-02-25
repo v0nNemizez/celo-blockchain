@@ -17,10 +17,6 @@
 package core
 
 import (
-	"fmt"
-	"sync"
-	"xyzc.dev/go/profile/gc"
-
 	"github.com/celo-org/celo-blockchain/common"
 	"github.com/celo-org/celo-blockchain/consensus"
 	"github.com/celo-org/celo-blockchain/consensus/misc"
@@ -32,8 +28,6 @@ import (
 	"github.com/celo-org/celo-blockchain/log"
 	"github.com/celo-org/celo-blockchain/params"
 )
-
-var once sync.Once
 
 // StateProcessor is a basic Processor, which takes care of transitioning
 // state from one point to another.
@@ -61,7 +55,6 @@ func NewStateProcessor(config *params.ChainConfig, bc *BlockChain, engine consen
 // returns the amount of gas that was used in the process. If any of the
 // transactions failed to execute due to insufficient gas it will return an error.
 func (p *StateProcessor) Process(block *types.Block, statedb *state.StateDB, cfg vm.Config) (types.Receipts, []*types.Log, uint64, error) {
-	timer := gc.NewGcAwareTimer("process")
 	var (
 		receipts types.Receipts
 		usedGas  = new(uint64)
@@ -111,13 +104,6 @@ func (p *StateProcessor) Process(block *types.Block, statedb *state.StateDB, cfg
 		}
 		receipts = append(receipts, receipt)
 	}
-	timer.End()
-	printHeader := func() { fmt.Printf("blockNumber,txCount,usedGas,%v\n", timer.CSVHeader()) }
-	once.Do(printHeader)
-	fmt.Printf("%v,%v,%v,%v\n",
-		header.Number.Uint64(),
-		len(block.Transactions()),
-		*usedGas, timer.CSVString())
 	log.Trace("Finished processing block", "func", "Process", "block", header.Number.Uint64(), "usedGas", *usedGas, "txCount", len(block.Transactions()))
 	return receipts, allLogs, *usedGas, nil
 }
